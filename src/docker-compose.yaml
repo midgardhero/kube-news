@@ -1,0 +1,42 @@
+version: '3.9'
+
+networks:
+  postgresnet:
+    driver: bridge
+
+volumes:
+  kubedevnews:
+  pgadmin-data:
+
+services:
+  app:
+    image: midgardhero/kube-news-desafio7:v1
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    networks:
+      - postgresnet
+  postgres:
+    image: postgres:14.5
+    networks:
+      - postgresnet
+    ports:
+      - 5432:5432
+    volumes:
+      - kubedevnews:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: Pg#123
+      POSTGRES_USER: kubedevnews
+      POSTGRES_DB: kubedevnews
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    networks:
+      - postgresnet
+    ports:
+      - 80:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: eu@eu.com
+      PGADMIN_DEFAULT_PASSWORD: admin
